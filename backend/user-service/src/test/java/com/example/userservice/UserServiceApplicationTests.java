@@ -1,27 +1,25 @@
 package com.example.userservice;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.userservice.mapper.UsersMapper;
-import com.example.userservice.pojo.Users;
+import com.example.userservice.service.EmailService;
+import com.example.userservice.service.UserService;
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 class UserServiceApplicationTests {
 
     @Autowired
-    private UsersMapper usersMapper;
+    private EmailService emailService;
+
+    @Autowired
+    private UserService userService;
 
     @Test
-    void contextLoads() {
-        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
-        List<Users> users = usersMapper.selectList(queryWrapper);
-        for (Users user : users) {
-            System.out.println(user);
-        }
+    void contextLoads() throws MessagingException {
+        emailService.sendEmailVerification("911124552@qq.com");
+        //userService.register("TestStudent1", "20230001", "911124552@qq.com", "myq888", "1234", "8CEP");
     }
 
 }
