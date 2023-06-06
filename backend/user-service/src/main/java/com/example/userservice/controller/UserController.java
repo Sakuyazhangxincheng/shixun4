@@ -5,6 +5,8 @@ import com.backend.backend.util.ResponseEntity;
 import com.example.userservice.pojo.Users;
 import com.example.userservice.service.EmailService;
 import com.example.userservice.service.UserService;
+import com.example.userservice.util.JwtTokenUtil;
+import com.example.userservice.util.VerCodeGenerateUtil;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,7 +45,8 @@ public class UserController {
         } else if (result == Global.USER_LOGIN_EXIST_ERROR) {
             return new ResponseEntity<>(Global.USER_LOGIN_EXIST_ERROR, "用户已存在", null);
         } else if (result == Global.USER_REGISTER_SUCCESS) {
-            return new ResponseEntity<>(Global.USER_REGISTER_SUCCESS, "注册成功", null);
+            String token = JwtTokenUtil.generateToken(name);
+            return new ResponseEntity<>(Global.USER_REGISTER_SUCCESS, "注册成功", token);
         } else {
             return new ResponseEntity<>(Global.USER_REGISTER_FAIL, "注册失败", null);
         }
@@ -53,7 +56,8 @@ public class UserController {
     public ResponseEntity<Users> login(@RequestParam String studentId, @RequestParam String password) {
         try {
             Users user = userService.login(studentId, password);
-            return new ResponseEntity<>(Global.USER_LOGIN_SUCCESS, "登录成功", user);
+            String token = JwtTokenUtil.generateToken(user.getName());
+            return new ResponseEntity<>(Global.USER_LOGIN_SUCCESS, token, user);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Global.USER_LOGIN_FAIL, "学号或密码输入错误", null);
         }
