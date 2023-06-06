@@ -59,10 +59,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable("id") Integer userId) {
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserById(@RequestParam Integer userID) {
         try {
-            boolean success = userService.deleteUserById(userId);
+            boolean success = userService.deleteUserById(userID);
             if (success) {
                 return new ResponseEntity<>(Global.USER_DELETE_SUCCESS, "用户删除成功");
             } else {
@@ -73,10 +73,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/deleteByStudentID/{id}")
-    public ResponseEntity<?> deleteUserByStudentId(@PathVariable("id") String studentId) {
+    @DeleteMapping("/deleteByStudentID")
+    public ResponseEntity<?> deleteUserByStudentId(@RequestParam String studentID) {
         try {
-            boolean success = userService.deleteUserByStudentId(studentId);
+            boolean success = userService.deleteUserByStudentId(studentID);
             if (success) {
                 return new ResponseEntity<>(Global.USER_DELETE_SUCCESS, "用户删除成功");
             } else {
@@ -87,12 +87,12 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Users> updateUser(@PathVariable("id") Integer userId, @RequestBody Users user) {
+    @PutMapping
+    public ResponseEntity<Users> updateUser(@RequestParam Integer userID, @RequestBody Users user) {
         try {
-            boolean success = userService.updateUser(userId, user);
+            boolean success = userService.updateUser(userID, user);
             if (success) {
-                Users userById = userService.getUserById(userId);
+                Users userById = userService.getUserById(userID);
                 return new ResponseEntity<Users>(Global.USER_INFO_UPDATE_SUCCESS, "用户更新成功", userById);
             } else {
                 return new ResponseEntity<>(Global.USER_NOT_FOUND, "找不到指定的用户");
@@ -102,10 +102,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Users> getUserById(@PathVariable("id") Integer userId) {
+    @GetMapping
+    public ResponseEntity<Users> getUserById(@RequestParam Integer userID) {
         try {
-            Users user = userService.getUserById(userId);
+            Users user = userService.getUserById(userID);
             if (user != null) {
                 return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", user);
             } else {
@@ -116,10 +116,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/student/{id}")
-    public ResponseEntity<Users> getUserByStudentId(@PathVariable("id") String studentId) {
+    @GetMapping("/selectByStudentID")
+    public ResponseEntity<Users> getUserByStudentId(@RequestParam String studentID) {
         try {
-            Users user = userService.getUserByStudentId(studentId);
+            Users user = userService.getUserByStudentId(studentID);
             if (user != null) {
                 return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", user);
             } else {
@@ -130,8 +130,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/name/{name}")
-    public ResponseEntity<Users> getUserByName(@PathVariable("name") String name) {
+    @GetMapping("/selectByName")
+    public ResponseEntity<Users> getUserByName(@RequestParam String name) {
         try {
             Users user = userService.getUserByName(name);
             if (user != null) {
