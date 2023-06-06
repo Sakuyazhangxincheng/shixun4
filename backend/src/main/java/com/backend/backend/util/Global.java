@@ -18,6 +18,9 @@ public class Global {
     public static final int VERIFICATION_SUCCESS = 23;
     public static final int VERIFICATION_FAIL = 24;
     public static final int USER_LOGIN_EXIST_ERROR = 25;
+    public static final int USER_DELETE_SUCCESS = 26;
+    public static final int USER_NOT_FOUND = 27;
+    public static final int USER_DELETE_ERROR = 28;
     public static final int USER_INFO_UPDATE_SUCCESS = 30;
     public static final int USER_INFO_UPDATE_FAIL = 31;
     public static final int USER_LOGOUT_SUCCESS = 40;

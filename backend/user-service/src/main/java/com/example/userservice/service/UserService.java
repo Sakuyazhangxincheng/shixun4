@@ -69,6 +69,76 @@ public class UserService {
 
         return existingUser;
     }
+
+    // 通过userID删除对应的用户
+    public boolean deleteUserById(Integer userId) {
+        Users user = usersMapper.selectById(userId);
+        if (user != null) {
+            int rows = usersMapper.deleteById(userId);
+            return rows > 0;
+        }
+        return false;
+    }
+
+    // 根据StudentID删除对应的用户
+    public boolean deleteUserByStudentId(String studentId) {
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("StudentID", studentId);
+        Users user = usersMapper.selectOne(queryWrapper);
+        if (user != null) {
+            int rows = usersMapper.delete(queryWrapper);
+            return rows > 0;
+        }
+        return false;
+    }
+
+    // 传入新的User对象，更新对应的用户信息
+    public boolean updateUser(int userID, Users newUser) {
+        Users user = usersMapper.selectById(userID);
+        if (user != null) {
+            newUser.setUserID(user.getUserID());
+            if (newUser.getName() == null) {
+                newUser.setName(user.getName());
+            }
+            if (newUser.getStudentID() == null) {
+                newUser.setStudentID(user.getStudentID());
+            }
+            if (newUser.getAvatar() == null) {
+                newUser.setAvatar(user.getAvatar());
+            }
+            if (newUser.getEmail() == null) {
+                newUser.setEmail(user.getEmail());
+            }
+            if (newUser.getPassword() == null) {
+                newUser.setPassword(user.getPassword());
+            }
+            if (newUser.getPhoneNumber() == null) {
+                newUser.setPhoneNumber(user.getPhoneNumber());
+            }
+            int rows = usersMapper.updateById(newUser);
+            return rows > 0;
+        }
+        return false;
+    }
+
+    // 根据UserID查询对应的用户
+    public Users getUserById(Integer userId) {
+        return usersMapper.selectById(userId);
+    }
+
+    // 根据studentID查询对应的用户
+    public Users getUserByStudentId(String studentId) {
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("StudentID", studentId);
+        return usersMapper.selectOne(queryWrapper);
+    }
+
+    // 根据Name查询对应的用户
+    public Users getUserByName(String name) {
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("Name", name);
+        return usersMapper.selectOne(queryWrapper);
+    }
 }
 
 
