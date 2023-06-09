@@ -12,6 +12,8 @@ public class GatewayConfig {
         return builder.routes()
                 .route("user-service", r -> r.path("/users/**")
                         .uri("lb://user-service"))
+                .route("bicycle-service", r -> r.path("/bicycles/**")
+                        .uri("lb://bicycle-service"))
                 .build();
     }
 }

@@ -25,7 +25,9 @@ public class TokenValidationFilter implements WebFilter {
         String path = request.getPath().value();
 
         // 判断是否为注册或登录相关的请求，如果是，则直接允许请求服务
-        if (path.startsWith("/users/register") || path.startsWith("/users/login") || path.startsWith("/users/sendEmail")) {
+        if (path.startsWith("/users/register") || path.startsWith("/users/login") || path.startsWith("/users/sendEmail")
+                || path.startsWith("/users/confirmCode") || path.startsWith("/users/loginByUsername") ||
+                path.startsWith("/users/registerWithoutCode")) {
             return chain.filter(exchange);
         }
 

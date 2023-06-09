@@ -27,6 +27,8 @@ public class Global {
     public static final int USER_LOGOUT_FAIL = 41;
 
     // Vehicle Management
+    public static final int VEHICLE_SEARCH_SUCCESS = 48;
+    public static final int VEHICLE_SEARCH_ERROR = 49;
     public static final int VEHICLE_ADD_SUCCESS = 50;
     public static final int VEHICLE_ADD_FAIL = 51;
     public static final int VEHICLE_UPDATE_SUCCESS = 60;

@@ -46,6 +46,22 @@ public class UserService {
         return Global.USER_REGISTER_SUCCESS;
     }
 
+    public int registerWithoutCode(String username, String studentID, String email, String password) {
+        // 检查邮箱和学生ID是否已经存在
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("Email", email).or().eq("StudentID", studentID);
+        Users existingUser = usersMapper.selectOne(queryWrapper);
+        if (existingUser != null) {
+            return Global.USER_LOGIN_EXIST_ERROR;
+        }
+
+        // 验证成功，创建新用户并保存到数据库
+        Users user = new Users(null, username, studentID, null, password, null, email);
+        usersMapper.insert(user);
+
+        return Global.USER_REGISTER_SUCCESS;
+    }
+
     public Users login(String studentId, String password) {
         // 检查学号和密码是否为空
         if (StringUtils.isEmpty(studentId) || StringUtils.isEmpty(password)) {
@@ -60,6 +76,30 @@ public class UserService {
         // 检查学号是否存在
         if (existingUser == null) {
             throw new IllegalArgumentException("学号不存在");
+        }
+
+        // 验证密码是否正确
+        if (!existingUser.getPassword().equals(password)) {
+            throw new IllegalArgumentException("密码错误");
+        }
+
+        return existingUser;
+    }
+
+    public Users loginByUsername(String username, String password) {
+        // 检查用户名和密码是否为空
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            throw new IllegalArgumentException("学号和密码都不能为空");
+        }
+
+        // 查询数据库
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("Name", username);
+        Users existingUser = usersMapper.selectOne(queryWrapper);
+
+        // 检查用户是否存在
+        if (existingUser == null) {
+            throw new IllegalArgumentException("用户不存在");
         }
 
         // 验证密码是否正确

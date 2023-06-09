@@ -6,10 +6,10 @@ import com.example.userservice.pojo.Users;
 import com.example.userservice.service.EmailService;
 import com.example.userservice.service.UserService;
 import com.example.userservice.util.JwtTokenUtil;
-import com.example.userservice.util.VerCodeGenerateUtil;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +21,9 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
     @PostMapping("/sendEmail")
     public ResponseEntity<?> sendEmail(@RequestParam String email) {
         try {
@@ -29,6 +32,20 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(Global.USER_LOGIN_FAIL, "服务器繁忙");
         }
+    }
+
+
+    @PostMapping("/confirmCode")
+    public ResponseEntity<?> verifyCode(@RequestParam String email, @RequestParam String userCode) {
+        // 从 Redis 中获取验证码
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        String correctCode = ops.get(email);
+
+        // 检查验证码是否存在，并验证用户输入的验证码是否正确
+        if (!userCode.equals(correctCode)) {
+            return new ResponseEntity<>(Global.VERIFICATION_FAIL, "验证码错误", null);
+        }
+        return new ResponseEntity<>(Global.VERIFICATION_SUCCESS, "验证码正确", null);
     }
 
     @PostMapping("/register")
@@ -52,6 +69,23 @@ public class UserController {
         }
     }
 
+    @PostMapping("/registerWithoutCode")
+    public ResponseEntity<?> register(@RequestParam String username,
+                                      @RequestParam String studentID,
+                                      @RequestParam String email,
+                                      @RequestParam String password) {
+        int result = userService.registerWithoutCode(username, studentID, email, password);
+
+        if (result == Global.USER_LOGIN_EXIST_ERROR) {
+            return new ResponseEntity<>(Global.USER_LOGIN_EXIST_ERROR, "用户已存在", null);
+        } else if (result == Global.USER_REGISTER_SUCCESS) {
+            String token = JwtTokenUtil.generateToken(username);
+            return new ResponseEntity<>(Global.USER_REGISTER_SUCCESS, "注册成功", token);
+        } else {
+            return new ResponseEntity<>(Global.USER_REGISTER_FAIL, "注册失败", null);
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Users> login(@RequestParam String studentId, @RequestParam String password) {
         try {
@@ -60,6 +94,17 @@ public class UserController {
             return new ResponseEntity<>(Global.USER_LOGIN_SUCCESS, token, user);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(Global.USER_LOGIN_FAIL, "学号或密码输入错误", null);
+        }
+    }
+
+    @PostMapping("/loginByUsername")
+    public ResponseEntity<Users> loginByUsername(@RequestParam String username, @RequestParam String password) {
+        try {
+            Users user = userService.loginByUsername(username, password);
+            String token = JwtTokenUtil.generateToken(user.getName());
+            return new ResponseEntity<>(Global.USER_LOGIN_SUCCESS, token, user);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(Global.USER_LOGIN_FAIL, "用户名或密码输入错误", null);
         }
     }
 
@@ -97,7 +142,7 @@ public class UserController {
             boolean success = userService.updateUser(userID, user);
             if (success) {
                 Users userById = userService.getUserById(userID);
-                return new ResponseEntity<Users>(Global.USER_INFO_UPDATE_SUCCESS, "用户更新成功", userById);
+                return new ResponseEntity<>(Global.USER_INFO_UPDATE_SUCCESS, "用户更新成功", userById);
             } else {
                 return new ResponseEntity<>(Global.USER_NOT_FOUND, "找不到指定的用户");
             }

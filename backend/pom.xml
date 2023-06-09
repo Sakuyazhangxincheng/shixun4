@@ -20,6 +20,7 @@
     <modules>
         <module>user-service</module>
         <module>gateway</module>
+        <module>bicycle-service</module>
     </modules>
 
     <packaging>pom</packaging>
