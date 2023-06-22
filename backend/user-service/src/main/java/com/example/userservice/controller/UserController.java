@@ -12,6 +12,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -37,7 +39,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/confirmCode")
+    @PostMapping("/verifyCode")
     public ResponseEntity<?> verifyCode(@RequestParam String email, @RequestParam String userCode) {
         // 从 Redis 中获取验证码
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
@@ -194,6 +196,11 @@ public class UserController {
         } catch (Exception e) {
             return new ResponseEntity<>(Global.INTERNAL_SERVER_ERROR, "查询用户失败", null);
         }
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<Users>> getAllUsers() {
+        return new ResponseEntity<>(200, "获取成功", userService.getAllUsers());
     }
 }
 

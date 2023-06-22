@@ -10,6 +10,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     @Autowired
@@ -17,6 +19,11 @@ public class UserService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    // 获取所有的用户信息
+    public List<Users> getAllUsers() {
+        return usersMapper.selectList(new QueryWrapper<>());
+    }
 
     public int register(String name, String studentId, String email, String password, String phoneNumber, String verificationCode) {
         // 从 Redis 中获取验证码
