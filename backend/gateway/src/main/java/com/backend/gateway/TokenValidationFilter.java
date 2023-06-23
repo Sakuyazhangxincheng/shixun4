@@ -32,7 +32,11 @@ public class TokenValidationFilter implements WebFilter {
        /* // 判断是否为注册或登录相关的请求，如果是，则直接允许请求服务
         if (path.startsWith("/users/register") || path.startsWith("/users/login") || path.startsWith("/users/sendEmail")
                 || path.startsWith("/users/verifyCode") || path.startsWith("/users/loginByUsername") ||
+<<<<<<< HEAD
                 path.startsWith("/users/registerWithoutCode") ||path.startsWith("/users/getAllUsers") ) {
+=======
+                path.startsWith("/users/registerWithoutCode") || path.startsWith("/users/forgetPassword")) {
+>>>>>>> eb5563573dd551e8000603a12e235b7fc5ae3d30
             return chain.filter(exchange);
         }
 
