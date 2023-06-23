@@ -4,8 +4,10 @@ import com.backend.backend.util.Global;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.bicycleservice.mapper.BicyclesMapper;
+import com.example.bicycleservice.mapper.OrdersMapper;
 import com.example.bicycleservice.mapper.RepairsMapper;
 import com.example.bicycleservice.pojo.Bicycles;
+import com.example.bicycleservice.pojo.Orders;
 import com.example.bicycleservice.pojo.Repairs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class BicyclesService {
 
     @Autowired
     private RepairsMapper repairsMapper;
+
+    @Autowired
+    private OrdersMapper ordersMapper;
 
     // 查询所有”可用“状态的车辆
     public List<Bicycles> getLatLngOfAvailable() {
@@ -80,5 +85,26 @@ public class BicyclesService {
         }
 
         return Global.REPORT_ISSUE_SUCCESS;
+    }
+
+    // 查询所有orders订单
+    public List<Orders> getAllOrders() {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        return ordersMapper.selectList(queryWrapper);
+    }
+
+    // 根据ID删除订单内容
+    public int deleteOrderByID(int orderID) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("OrderID", orderID);
+        return ordersMapper.delete(queryWrapper);
+    }
+
+    // 根据订单ID和新的订单内容修改订单内容
+    public int updateOrderByID(int orderID, Orders newOrder) {
+        UpdateWrapper<Orders> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("OrderID", orderID);
+        newOrder.setOrderID(orderID);
+        return ordersMapper.update(newOrder, updateWrapper);
     }
 }
