@@ -184,7 +184,7 @@ public class UserService {
     public Users getUserByName(String name) {
         QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("Name", name);
-        return usersMapper.selectOne(queryWrapper);
+        return usersMapper.selectList(queryWrapper).get(0);
     }
 
     // 根据email查询对应的用户
