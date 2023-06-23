@@ -11,23 +11,28 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-@Component
+//@Component
 public class TokenValidationFilter implements WebFilter {
 
     private static final String SECRETE_KEY = "DarLinDeShiXun123456789012345678901234567890";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
+
+        //response.addHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+        System.out.println(exchange);
 
         // 获取请求路径
         String path = request.getPath().value();
 
-        // 判断是否为注册或登录相关的请求，如果是，则直接允许请求服务
+        return chain.filter(exchange);
+       /* // 判断是否为注册或登录相关的请求，如果是，则直接允许请求服务
         if (path.startsWith("/users/register") || path.startsWith("/users/login") || path.startsWith("/users/sendEmail")
                 || path.startsWith("/users/verifyCode") || path.startsWith("/users/loginByUsername") ||
-                path.startsWith("/users/registerWithoutCode")) {
+                path.startsWith("/users/registerWithoutCode") ||path.startsWith("/users/getAllUsers") ) {
             return chain.filter(exchange);
         }
 
@@ -52,12 +57,13 @@ public class TokenValidationFilter implements WebFilter {
             return response.setComplete();
         }
 
-        return chain.filter(exchange);
+        return chain.filter(exchange);*/
     }
 
     private String extractTokenFromRequest(ServerHttpRequest request) {
         // 从请求头中获取token
         String authHeader = request.getHeaders().getFirst("Authorization");
+        System.out.println(authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }

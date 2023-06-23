@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -171,11 +172,14 @@ public class UserController {
     }
 
     @GetMapping("/selectByStudentID")
-    public ResponseEntity<Users> getUserByStudentId(@RequestParam String studentID) {
+    public ResponseEntity<List<Users>> getUserByStudentId(@RequestParam String studentID) {
         try {
             Users user = userService.getUserByStudentId(studentID);
             if (user != null) {
-                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", user);
+                System.out.println("123");
+                List<Users> users=new ArrayList<>();
+                users.add(user);
+                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", users);
             } else {
                 return new ResponseEntity<>(Global.USER_NOT_FOUND, "找不到指定的用户", null);
             }
@@ -185,11 +189,14 @@ public class UserController {
     }
 
     @GetMapping("/selectByName")
-    public ResponseEntity<Users> getUserByName(@RequestParam String name) {
+    public ResponseEntity<List<Users>> getUserByName(@RequestParam String name) {
         try {
             Users user = userService.getUserByName(name);
             if (user != null) {
-                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", user);
+                System.out.println("123");
+                List<Users> users=new ArrayList<>();
+                users.add(user);
+                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", users);
             } else {
                 return new ResponseEntity<>(Global.USER_NOT_FOUND, "找不到指定的用户", null);
             }
