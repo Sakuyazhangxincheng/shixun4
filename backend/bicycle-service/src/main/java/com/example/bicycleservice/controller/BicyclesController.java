@@ -76,11 +76,16 @@ public class BicyclesController {
                                      @RequestParam double p3,
                                      @RequestParam double p4,
                                      @RequestParam double p5,
-                                     @RequestParam double p6) {
+                                     @RequestParam String p6) {
         double[][] x = Statistics.getX();
         double[] y = Statistics.getY();
         MultipleLinearRegression mlr = new MultipleLinearRegression(x, y);
-        double[] input = {p1, p2, p3, p4, p5, p6};
+        double p7 = 0;
+        if(p6.equals("y")) p7 = 1;
+        else if (p6.equals("s")) p7 = 2;
+        else if (p6.equals("x")) p7 = 3;
+        else if (p6.equals("n")) p7 = 4;
+        double[] input = {p1, p2, p3, p4, p5, p7};
         double prediction = mlr.predict(input);
         return new ResponseEntity<>(Global.SUCCESS, "预测结果", prediction);
     }
