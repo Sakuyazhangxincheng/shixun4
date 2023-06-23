@@ -30,9 +30,11 @@ public class UserController {
     @PostMapping("/sendEmail")
     public ResponseEntity<?> sendEmail(@RequestParam String email) {
         try {
+            System.out.println("123");
             emailService.sendEmailVerification(email);
             return new ResponseEntity<>(Global.MAIL_SEND_SUCCESS, "验证码发送成功");
         } catch (Exception e) {
+            System.out.println(e);
             return new ResponseEntity<>(Global.USER_LOGIN_FAIL, "服务器繁忙");
         }
     }
@@ -92,6 +94,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Users> login(@RequestParam String studentId, @RequestParam String password) {
         try {
+            System.out.println("123????????????");
             Users user = userService.login(studentId, password);
             String token = JwtTokenUtil.generateToken(user.getName());
             return new ResponseEntity<>(Global.USER_LOGIN_SUCCESS, token, user);
