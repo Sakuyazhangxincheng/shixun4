@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,11 +31,9 @@ public class UserController {
     @PostMapping("/sendEmail")
     public ResponseEntity<?> sendEmail(@RequestParam String email) {
         try {
-            System.out.println("123");
             emailService.sendEmailVerification(email);
             return new ResponseEntity<>(Global.MAIL_SEND_SUCCESS, "验证码发送成功");
         } catch (Exception e) {
-            System.out.println(e);
             return new ResponseEntity<>(Global.USER_LOGIN_FAIL, "服务器繁忙");
         }
     }
@@ -94,7 +93,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Users> login(@RequestParam String studentId, @RequestParam String password) {
         try {
-            System.out.println("123????????????");
             Users user = userService.login(studentId, password);
             String token = JwtTokenUtil.generateToken(user.getName());
             return new ResponseEntity<>(Global.USER_LOGIN_SUCCESS, token, user);
@@ -172,11 +170,14 @@ public class UserController {
     }
 
     @GetMapping("/selectByStudentID")
-    public ResponseEntity<Users> getUserByStudentId(@RequestParam String studentID) {
+    public ResponseEntity<List<Users>> getUserByStudentId(@RequestParam String studentID) {
         try {
             Users user = userService.getUserByStudentId(studentID);
             if (user != null) {
-                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", user);
+                System.out.println("123");
+                List<Users> users=new ArrayList<>();
+                users.add(user);
+                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", users);
             } else {
                 return new ResponseEntity<>(Global.USER_NOT_FOUND, "找不到指定的用户", null);
             }
@@ -186,11 +187,14 @@ public class UserController {
     }
 
     @GetMapping("/selectByName")
-    public ResponseEntity<Users> getUserByName(@RequestParam String name) {
+    public ResponseEntity<List<Users>> getUserByName(@RequestParam String name) {
         try {
             Users user = userService.getUserByName(name);
             if (user != null) {
-                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", user);
+                System.out.println("123");
+                List<Users> users=new ArrayList<>();
+                users.add(user);
+                return new ResponseEntity<>(Global.SUCCESS, "用户查询成功", users);
             } else {
                 return new ResponseEntity<>(Global.USER_NOT_FOUND, "找不到指定的用户", null);
             }

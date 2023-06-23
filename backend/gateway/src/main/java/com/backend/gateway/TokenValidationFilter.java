@@ -2,6 +2,9 @@ package com.backend.gateway;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -18,8 +21,11 @@ public class TokenValidationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
+
+        System.out.println(exchange);
 
         // 获取请求路径
         String path = request.getPath().value();
@@ -27,7 +33,7 @@ public class TokenValidationFilter implements WebFilter {
         // 判断是否为注册或登录相关的请求，如果是，则直接允许请求服务
         if (path.startsWith("/users/register") || path.startsWith("/users/login") || path.startsWith("/users/sendEmail")
                 || path.startsWith("/users/verifyCode") || path.startsWith("/users/loginByUsername") ||
-                path.startsWith("/users/registerWithoutCode") || path.startsWith("/users/forgetPassword")) {
+                path.startsWith("/users/registerWithoutCode") ||path.startsWith("/users/getAllUsers") ) {
             return chain.filter(exchange);
         }
 
@@ -58,6 +64,7 @@ public class TokenValidationFilter implements WebFilter {
     private String extractTokenFromRequest(ServerHttpRequest request) {
         // 从请求头中获取token
         String authHeader = request.getHeaders().getFirst("Authorization");
+        System.out.println(authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
