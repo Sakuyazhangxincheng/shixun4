@@ -6,6 +6,7 @@ import com.example.userservice.pojo.Users;
 import com.example.userservice.service.EmailService;
 import com.example.userservice.service.UserService;
 import com.example.userservice.util.JwtTokenUtil;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -198,6 +199,26 @@ public class UserController {
     @GetMapping("/getAllUsers")
     public ResponseEntity<List<Users>> getAllUsers() {
         return new ResponseEntity<>(200, "获取成功", userService.getAllUsers());
+    }
+
+    @PostMapping("/forgetPassword")
+    public ResponseEntity<?> forgetPassword(@RequestParam String email, @RequestParam String code,
+                                            @RequestParam String password) {
+        // 从 Redis 中获取验证码
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        String correctCode = ops.get(email);
+
+        // 检查验证码是否存在，并验证用户输入的验证码是否正确
+        if (!code.equals(correctCode)) {
+            return new ResponseEntity<>(Global.VERIFICATION_FAIL, "验证码错误", null);
+        }
+
+        // 验证码正确，根据邮箱和密码修改新的密码
+        Users user = userService.getUserByEmail(email);
+        user.setEmail(email);
+        user.setPassword(password);
+        userService.updateUser(user.getUserID(), user);
+        return new ResponseEntity<>(Global.SUCCESS, "修改成功", null);
     }
 }
 

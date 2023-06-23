@@ -4,6 +4,8 @@ import com.backend.backend.util.Global;
 import com.backend.backend.util.ResponseEntity;
 import com.example.bicycleservice.pojo.Bicycles;
 import com.example.bicycleservice.service.BicyclesService;
+import com.example.bicycleservice.util.MultipleLinearRegression;
+import com.example.bicycleservice.util.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,11 +58,29 @@ public class BicyclesController {
                 return new ResponseEntity<>(Global.VEHICLE_UPDATE_FAIL, "更新车辆状态信息失败");
             } else if (result == Global.REPORT_ISSUE_FAIL) {
                 return new ResponseEntity<>(Global.REPORT_ISSUE_FAIL, "创建新的维修信息失败");
+            } else if (result == Global.REPORT_ISSUE_SUCCESS) {
+                return new ResponseEntity<>(Global.REPORT_ISSUE_SUCCESS, "维修信息登记成功");
             } else {
                 return new ResponseEntity<>(Global.INTERNAL_SERVER_ERROR, "服务端出错");
             }
         } catch (Exception e) {
             return new ResponseEntity<>(Global.INTERNAL_SERVER_ERROR, "服务端出错");
         }
+    }
+
+    // 前端传入6个浮点数数据，后端返回预测结果
+    @GetMapping("/predict")
+    public ResponseEntity<?> predict(@RequestParam double p1,
+                                     @RequestParam double p2,
+                                     @RequestParam double p3,
+                                     @RequestParam double p4,
+                                     @RequestParam double p5,
+                                     @RequestParam double p6) {
+        double[][] x = Statistics.getX();
+        double[] y = Statistics.getY();
+        MultipleLinearRegression mlr = new MultipleLinearRegression(x, y);
+        double[] input = {p1, p2, p3, p4, p5, p6};
+        double prediction = mlr.predict(input);
+        return new ResponseEntity<>(Global.SUCCESS, "预测结果", prediction);
     }
 }

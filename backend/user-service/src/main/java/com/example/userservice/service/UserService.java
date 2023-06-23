@@ -186,6 +186,13 @@ public class UserService {
         queryWrapper.eq("Name", name);
         return usersMapper.selectOne(queryWrapper);
     }
+
+    // 根据email查询对应的用户
+    public Users getUserByEmail(String email) {
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("Email", email);
+        return usersMapper.selectOne(queryWrapper);
+    }
 }
 
 
